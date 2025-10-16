@@ -10,10 +10,10 @@ const knexConfig: Record<string, Knex.Config> = {
       password: 'postgres',
       database: 'wb',
     },
-    // migrations: {
-    //   directory: './migrations',
-    //   extension: 'ts',
-    // },
+    migrations: {
+      directory: './migrations',
+      extension: 'ts',
+    },
   },
 };
 

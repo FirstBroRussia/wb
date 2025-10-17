@@ -25,73 +25,57 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Project setup
+# 1. Установка зависимостей
+
+Первым делом выполните установку всех необходимых пакетов:
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+# 2. Миграции
+В файле `docker-compose.yaml` предусмотрена директива для поднятия тестовой базы данных PostgreSQL.
+
+После того как база данных будет поднята, для выполнения миграций необходимо указать переменную окружения `DATABASE_URL` со своими данными подключения.
+
+Формат строки подключения:
+`postgres://postgres:postgres@localhost:5432/postgres` (замените на ваши учётные данные).
+
+## Команды для работы с миграциями
 
 ```bash
-# development
-$ npm run start
+# Создать таблицы в БД
+$ DATABASE_URL=ваша_строка_подключения npx knex --knexfile src/knex/knexfile.js migrate:latest --env development
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Удалить таблицы из БД
+$ DATABASE_URL=ваша_строка_подключения npx knex --knexfile src/knex/knexfile.js migrate:rollback --env development
 ```
 
-## Run tests
+
+# 3. Запуск приложения
+
+Чтобы запустить приложение, нужно создать `env` файл. Его пример находится в `./env/example.env`
+
+## Запуск в режиме `development`:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+$ ENV_PATH=путь_до_созданного_вами_env_файла npm run start:dev
 ```
 
-## Deployment
+# 4. Запуск с помощью Docker Compose
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+После миграции вы можете запустить готовое приложение с помощью docker compose.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Зайдите в `docker-compose.yaml`, установите свои env на корректные и вызовите из корня проекта:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# В зависимости от версии docker-compose
+$ docker compose up -d
+# или
+$ docker-compose up -d
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 

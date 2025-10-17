@@ -1,9 +1,11 @@
 import knex, { Knex } from 'knex';
-import knexConfig from './knexfile';
+import config from './knexfile';
 
 import { Global, Logger, Module } from '@nestjs/common';
 
 import { KNEX_PROVIDER } from './utils/utils';
+import { ConfigService } from '@nestjs/config';
+import { AppEnvInterface } from 'src/app/utils/interface/app-env.interface';
 
 
 
@@ -12,8 +14,11 @@ import { KNEX_PROVIDER } from './utils/utils';
   providers: [
     {
       provide: KNEX_PROVIDER,
-      useFactory: async (): Promise<Knex> => {
-        const knexInstance = knex(knexConfig['development']);
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService<AppEnvInterface>): Promise<Knex> => {
+        config['development'].connection = configService.get('DATABASE_URL');
+
+        const knexInstance = knex(config['development']);
 
         try {
           await knexInstance.raw('SELECT 1');

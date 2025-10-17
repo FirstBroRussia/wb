@@ -6,6 +6,9 @@ import { AppEnvInterface } from "../interface/app-env.interface";
 
 export class AppEnvConfigClass implements AppEnvInterface {
   @IsString()
+  DATABASE_URL: string;
+
+  @IsString()
   GOOGLE_ACCOUNT_JSON_FILE_PATH: string;
 
   @Transform(({ value }) => (value as string).split(','))

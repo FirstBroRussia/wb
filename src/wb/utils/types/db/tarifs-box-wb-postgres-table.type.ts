@@ -1,4 +1,4 @@
-export type TarifsBoxWBPostgresTableType = {
+export type TarifsBoxWBPostgresTableRepopsitoryType = {
   id: number;
   created_at: string;
   updated_at: string;
@@ -16,4 +16,4 @@ export type TarifsBoxWBPostgresTableType = {
   record_date: Date;
 };
 
-export type TarifsBoxWBPostgresTableInsertRepositoryType = Omit<TarifsBoxWBPostgresTableType, 'id' | 'created_at'| 'updated_at'>;
+export type TarifsBoxWBPostgresTableInsertRepositoryType = Omit<TarifsBoxWBPostgresTableRepopsitoryType, 'id' | 'created_at'| 'updated_at'>;

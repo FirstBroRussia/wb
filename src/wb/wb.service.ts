@@ -1,7 +1,6 @@
 import { AxiosInstance, AxiosError } from 'axios';
 
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression, Timeout } from '@nestjs/schedule';
 import { HttpService } from '@nestjs/axios';
 
 import { WBRepository } from './repository/wb.repopsitory';
@@ -21,15 +20,17 @@ export class WbService {
 
 
   constructor(
+    httpService: HttpService,
     private readonly wbRepository: WBRepository,
-    private readonly httpService: HttpService,
   ) {
     this.axiosHttpClient = httpService.axiosRef;
   }
 
 
   public async getWBTarifsBoxData() {
-    const currentDataString = new Date().toLocaleDateString('en-CA');
+    const currentDataString = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Europe/Moscow',
+    }).format(new Date());
 
     const res = await this.axiosHttpClient.get(`${WB_TARIFS_BOX_HTTP_URL}?date=${currentDataString}`, {
       headers: {
@@ -68,19 +69,11 @@ export class WbService {
     );
 
     const rows = await this.wbRepository.insertOrMergeTarifsBoxData(formattedWarehouseList);
+    this.logger.log('✅ Данные в БД о тарифах на коробки обновлены');
 
 
     return rows;
   }
 
-
-  // @Timeout(3000)
-  // @Cron(CronExpression.EVERY_HOUR)
-  // async responseToDatabase() {
-  //   const rows = await this.getWBTarifsBoxData();
-
-  //   this.logger.log('От сервера получены следующие тарифы на коробки:');
-  //   console.log(rows);
-  // }
 
 }

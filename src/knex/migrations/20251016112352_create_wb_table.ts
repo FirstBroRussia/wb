@@ -4,12 +4,14 @@ import { TARIFS_BOX_WB_PG_TABLE_NAME } from "../utils/utils";
 
 
 export async function up(knex: Knex): Promise<void> {
-  await knex.schema.createTable(TARIFS_BOX_WB_PG_TABLE_NAME, (table) => {
-    table.increments('id').primary();
-    
-    table.timestamp('created_at').defaultTo(knex.fn.now());
-    table.timestamp('updated_at').defaultTo(knex.fn.now());
+  await knex.raw(`CREATE EXTENSION IF NOT EXISTS "pgcrypto"`);
 
+  await knex.schema.createTable(TARIFS_BOX_WB_PG_TABLE_NAME, (table) => {
+    table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
+
+    table.timestamp('created_at').defaultTo(knex.raw("timezone('Europe/Moscow', now())")).notNullable();
+    table.timestamp('updated_at').defaultTo(knex.raw("timezone('Europe/Moscow', now())")).notNullable();
+    
     table.float('box_delivery_base').nullable();
     table.float('box_delivery_coef_expr', 10, 5).nullable();
     table.float('box_delivery_liter', 10, 5).nullable();
@@ -23,7 +25,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('geo_name', 255).notNullable();
     table.string('warehouse_name', 255).notNullable();
     
-    table.date('record_date').notNullable();
+    table.string('record_date', 100).notNullable();
 
 
     table.unique(['warehouse_name', 'record_date']);

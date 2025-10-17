@@ -4,7 +4,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { KNEX_PROVIDER, TARIFS_BOX_WB_PG_TABLE_NAME } from '../../knex/utils/utils';
 
-import { TarifsBoxWBPostgresTableInsertRepositoryType, TarifsBoxWBPostgresTableType } from '../utils/types/db/tarifs-box-wb-postgres-table.type';
+import { TarifsBoxWBPostgresTableInsertRepositoryType, TarifsBoxWBPostgresTableRepopsitoryType } from '../utils/types/db/tarifs-box-wb-postgres-table.type';
 
 
 
@@ -12,7 +12,7 @@ import { TarifsBoxWBPostgresTableInsertRepositoryType, TarifsBoxWBPostgresTableT
 export class WBRepository {
   private readonly logger = new Logger(WBRepository.name);
 
-  private tarifsBoxWbModel: Knex.QueryBuilder<TarifsBoxWBPostgresTableType>;
+  private tarifsBoxWbModel: Knex.QueryBuilder<TarifsBoxWBPostgresTableRepopsitoryType>;
 
   constructor(
     @Inject(KNEX_PROVIDER) private readonly knex: Knex, 
@@ -21,7 +21,7 @@ export class WBRepository {
   }
 
 
-  public async insertOrMergeTarifsBoxData(data: TarifsBoxWBPostgresTableInsertRepositoryType[]): Promise<TarifsBoxWBPostgresTableType[]> {
+  public async insertOrMergeTarifsBoxData(data: TarifsBoxWBPostgresTableInsertRepositoryType[]): Promise<TarifsBoxWBPostgresTableRepopsitoryType[]> {
     const insertedRows = await this.tarifsBoxWbModel
       .insert(data)
       .onConflict(['warehouse_name', 'record_date'])
@@ -36,7 +36,7 @@ export class WBRepository {
         box_storage_coef_expr: this.knex.raw('EXCLUDED.box_storage_coef_expr'),
         box_storage_liter: this.knex.raw('EXCLUDED.box_storage_liter'),
         geo_name: this.knex.raw('EXCLUDED.geo_name'),
-        updated_at: this.knex.fn.now(),
+        updated_at: this.knex.raw("timezone('Europe/Moscow', now())"),
     })
       .returning('*');
 
@@ -45,16 +45,14 @@ export class WBRepository {
   }
 
 
-  public async getAllRecord() {
-    const rows = await this.tarifsBoxWbModel.select('*');
+  public async getRecords(page: number = 1, pageSize: number = 40) {
+    const offset = (page - 1) * pageSize;
 
-    console.log(rows);
+    return await this.tarifsBoxWbModel.select('*').limit(pageSize).offset(offset);
   }
 
   public async deleteAllRecord() {
-    const count = await this.tarifsBoxWbModel.del();
-
-    console.log(count);
+    return await this.tarifsBoxWbModel.del();
   }
 
 }

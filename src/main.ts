@@ -1,17 +1,12 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app/app.module';
 import { Logger } from '@nestjs/common';
 
-
-const APP_HOST = 'localhost';
-const APP_PORT = 3000;
+import { AppModule } from './app/app.module';
 
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  
-  await app.listen(APP_PORT, APP_HOST, () => {
-    Logger.log(`Приложение запущено на http://${APP_HOST}:${APP_PORT}`);
-  });
+  await NestFactory.createApplicationContext(AppModule);
+
+  Logger.log('Приложение запущено!');
 }
 bootstrap();

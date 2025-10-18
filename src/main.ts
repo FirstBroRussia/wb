@@ -10,7 +10,7 @@ const APP_PORT = 3000;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  await app.listen(process.env.PORT ?? 3000, () => {
+  await app.listen(APP_PORT, APP_HOST, () => {
     Logger.log(`Приложение запущено на http://${APP_HOST}:${APP_PORT}`);
   });
 }
